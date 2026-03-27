@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SignalHire AI | Intelligent Candidate Analysis</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="container">
+    <h1>SignalHire AI</h1>
+    <p class="subtitle">Evaluate GitHub profiles with artificial intelligence to find the perfect technical match.</p>
+    
+    <div class="search-box">
+      <input type="text" id="username" placeholder="Enter GitHub username..." spellcheck="false" autocomplete="off" />
+      <button onclick="analyze()">Analyze Profile</button>
+    </div>
+  </div>
+
+  <div id="loader">
+    <div class="spinner"></div>
+    <p id="loader-text">Analyzing repositories...</p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

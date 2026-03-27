@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analysis Result | SignalHire AI</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="results-view">
+
+  <div class="container" style="max-width: 800px;">
+    <div class="results-card">
+      <div class="results-header">
+        <div>
+          <h2 style="font-size: 2rem; margin-bottom: 0.25rem;" id="res-username">@username</h2>
+          <p style="color: var(--text-secondary);">Engineer Evaluation Result</p>
+        </div>
+        <div class="score-badge" id="res-score">00</div>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <span class="metric-label">GitHub Activity Score</span>
+          <div class="metric-value" id="res-score-detail">0</div>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Public Repositories</span>
+          <div class="metric-value" id="res-repos">0</div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h3 class="panel-title">AI Hiring Decision</h3>
+        <div class="panel-opinion" id="res-decision">
+          Waiting for panel discussion...
+        </div>
+      </div>
+
+      <div style="margin-top: 2.5rem; text-align: left;">
+        <button onclick="window.location.href='index.html'" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); padding: 0.75rem 1.5rem;">
+          ← Search Another
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="loader">
+    <div class="spinner"></div>
+    <p id="loader-text">Finalizing evaluation...</p>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Initialize results page
+    window.onload = function() {
+      if (document.body.classList.contains('results-view')) {
+        const results = JSON.parse(sessionStorage.getItem('analysis_results'));
+        if (!results) {
+          window.location.href = 'index.html';
+          return;
+        }
+
+        document.getElementById('res-username').innerText = `@${results.username}`;
+        document.getElementById('res-score').innerText = results.score;
+        document.getElementById('res-score-detail').innerText = results.score;
+        document.getElementById('res-repos').innerText = results.repos;
+
+        // Optionally fetch decision if not already present
+        if (results.decision) {
+          document.getElementById('res-decision').innerText = results.decision;
+        } else {
+          // If we want to simulate/fetch panel decision here
+          // This could be a second API call
+        }
+      }
+    };
+  </script>
+</body>
+</html>
