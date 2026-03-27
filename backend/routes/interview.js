@@ -1,5 +1,5 @@
 const express = require("express");
-const callAI = require("../services/openai");
+const { callAI } = require("../services/openai");
 const router = express.Router();
 
 router.post("/", async (req, res) => {
@@ -15,7 +15,7 @@ If weak → simplify.
 Return next question only.
 `;
 
-  const result = await callAI(prompt, "meta-llama/Llama-3.1-8B-Instruct");
+  const result = await callAI(prompt, "meta-llama/Meta-Llama-3.1-8B-Instruct");
 
   res.json({ nextQuestion: result });
 });

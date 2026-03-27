@@ -10,43 +10,49 @@ async function analyze() {
 
   try {
     // 1. GitHub Analysis
-    loaderText.innerText = `Analyzing @${username}'s repositories...`;
+    loaderText.innerText = `Connecting to GitHub API for @${username}...`;
     const githubRes = await fetch(`${API_BASE}/github`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({ username })
     });
     const githubData = await githubRes.json();
-
     if (githubData.error) throw new Error(githubData.error);
 
-    // 2. AI Hiring Panel Decision
-    loaderText.innerText = "Simulating AI hiring panel discussion...";
+    // 2. AI Recruiter Panel Decision
+    loaderText.innerText = "Recruiter AI analyzing technical footprint...";
     const decisionRes = await fetch(`${API_BASE}/decision`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({ 
-        githubScore: githubData.score, 
-        interviewPerformance: "Candidate has strong open source contributions." 
+        githubScore: githubData.score,
+        totalRepos: githubData.totalRepos,
+        experience: githubData.experience,
+        languages: githubData.languages,
+        descriptions: githubData.descriptions
       })
     });
     const decisionData = await decisionRes.json();
 
-    // 3. Store and Redirect
+    // 3. Complete Data Packaging
     sessionStorage.setItem('analysis_results', JSON.stringify({
       username,
       score: githubData.score,
-      repos: githubData.repos,
-      decision: decisionData.decision
+      totalRepos: githubData.totalRepos,
+      topRepos: githubData.topRepos,
+      languages: githubData.languages,
+      experience: githubData.experience,
+      decisionData: decisionData
     }));
 
-    window.location.href = 'results.html';
+    loaderText.innerText = "Finalizing dashboard...";
+    setTimeout(() => {
+        window.location.href = 'results.html';
+    }, 500);
 
   } catch (err) {
+    console.error(err);
     alert("Analysis failed: " + err.message);
     loader.style.display = "none";
   }
 }
-
-// Logic for results initialization is also in results.html for faster loading,
-// but we keep script.js as the core logic provider.

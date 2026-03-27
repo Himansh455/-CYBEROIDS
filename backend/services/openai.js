@@ -1,13 +1,13 @@
 const axios = require("axios");
 
-const callAI = async (prompt, model = "meta-llama/Llama-3.1-8B-Instruct") => {
+const callAI = async (prompt, model = "meta-llama/Meta-Llama-3.1-8B-Instruct") => {
   try {
     const response = await axios.post(
-      "https://api.featherless.ai/v1/completions",
+      "https://api.featherless.ai/v1/chat/completions",
       {
         model: model,
-        prompt: prompt,
-        max_tokens: 300
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 500
       },
       {
         headers: {
@@ -17,14 +17,38 @@ const callAI = async (prompt, model = "meta-llama/Llama-3.1-8B-Instruct") => {
       }
     );
 
-    console.log(response.data); // debug once
-
-    return response.data.choices?.[0]?.text || response.data.output || response.data.text || JSON.stringify(response.data);
+    console.log(`AI Response (${model}): Success`);
+    return response.data.choices?.[0]?.message?.content || JSON.stringify(response.data);
 
   } catch (err) {
-    console.error(err.response?.data || err.message);
-    return "AI Error";
+    const errorMsg = err.response?.data?.error?.message || err.response?.data || err.message;
+    console.error(`AI Service Error (${model}):`, errorMsg);
+    return "AI Error (" + errorMsg + ")";
   }
 };
 
-module.exports = callAI;
+const verifyAIConfig = async () => {
+    if (!process.env.FEATHERLESS_API_KEY) {
+        console.error("AI Warning: FEATHERLESS_API_KEY is missing from .env");
+        return;
+    }
+    // Simple test call
+    try {
+        await axios.post(
+            "https://api.featherless.ai/v1/chat/completions",
+            {
+              model: "meta-llama/Meta-Llama-3.1-8B-Instruct",
+              messages: [{ role: "user", content: "hi" }],
+              max_tokens: 5
+            },
+            {
+              headers: { Authorization: `Bearer ${process.env.FEATHERLESS_API_KEY}` }
+            }
+        );
+        console.log("✅ AI Authentication: Verified (Featherless AI)");
+    } catch (err) {
+        console.error("❌ AI Authentication Failed:", err.response?.data?.error?.message || err.message);
+    }
+};
+
+module.exports = { callAI, verifyAIConfig };

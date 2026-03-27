@@ -3,74 +3,161 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Analysis Result | SignalHire AI</title>
+  <title>Developer Analytics Dashboard | SignalHire AI</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="results-view">
+<body>
 
-  <div class="container" style="max-width: 800px;">
-    <div class="results-card">
-      <div class="results-header">
+  <nav>
+    <div class="brand">
+      <div class="brand-icon">S</div>
+      SignalHire AI
+    </div>
+  </nav>
+
+  <div class="dashboard-container">
+    <div class="dashboard-header" id="dashboard-header">
+      <div class="user-profile">
+        <div class="avatar" id="res-avatar">?</div>
         <div>
-          <h2 style="font-size: 2rem; margin-bottom: 0.25rem;" id="res-username">@username</h2>
-          <p style="color: var(--text-secondary);">Engineer Evaluation Result</p>
+          <h1 id="res-username">@username</h1>
+          <p style="color: var(--text-dim);">Technical Candidate Evaluation</p>
         </div>
-        <div class="score-badge" id="res-score">00</div>
+      </div>
+      <div class="grade-badge" id="res-grade">-</div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="card">
+        <div class="card-title">Activity Score <span class="trend up">+12.5%</span></div>
+        <div class="card-value" id="res-score">0</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Total Repositories</div>
+        <div class="card-value" id="res-repos">0</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Est. Experience</div>
+        <div class="card-value"><span id="res-exp">0</span>y</div>
+      </div>
+    </div>
+
+    <div class="analysis-grid">
+      <!-- Left Column -->
+      <div class="pros-cons">
+        <div class="card">
+          <div class="card-title">Hiring Analysis</div>
+          <div id="res-summary" style="margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: 500;">Analyzing candidate footprint...</div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <p style="font-size: 0.75rem; color: var(--emerald); font-weight: 700; text-transform: uppercase; margin-bottom: 0.75rem;">Key Strengths</p>
+              <div id="res-pros"></div>
+            </div>
+            <div>
+              <p style="font-size: 0.75rem; color: #ef4444; font-weight: 700; text-transform: uppercase; margin-bottom: 0.75rem;">Potential Risks</p>
+              <div id="res-cons"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Top Project Portfolio</div>
+          <div id="res-top-repos" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <!-- Projected repos -->
+          </div>
+        </div>
       </div>
 
-      <div class="metrics-grid">
-        <div class="metric-item">
-          <span class="metric-label">GitHub Activity Score</span>
-          <div class="metric-value" id="res-score-detail">0</div>
+      <!-- Right Column -->
+      <div style="display: flex; flex-direction: column; gap: 2rem;">
+        <div class="card">
+          <div class="card-title">Technical Skill Stack</div>
+          <div class="skills-list" id="res-skills">
+            <!-- AI detected skills -->
+          </div>
         </div>
-        <div class="metric-item">
-          <span class="metric-label">Public Repositories</span>
-          <div class="metric-value" id="res-repos">0</div>
-        </div>
-      </div>
 
-      <div class="panel-section">
-        <h3 class="panel-title">AI Hiring Decision</h3>
-        <div class="panel-opinion" id="res-decision">
-          Waiting for panel discussion...
+        <div class="card">
+          <div class="card-title">Language Distribution</div>
+          <div id="res-languages" style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Bars will be here -->
+          </div>
         </div>
       </div>
+    </div>
 
-      <div style="margin-top: 2.5rem; text-align: left;">
-        <button onclick="window.location.href='index.html'" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--glass-border); padding: 0.75rem 1.5rem;">
-          ← Search Another
-        </button>
-      </div>
+    <div style="text-align: center; margin-top: 4rem;">
+      <a href="index.html" class="btn-secondary">Analyze Another Profile</a>
     </div>
   </div>
 
-  <div id="loader">
-    <div class="spinner"></div>
-    <p id="loader-text">Finalizing evaluation...</p>
-  </div>
-
-  <script src="script.js"></script>
   <script>
-    // Initialize results page
     window.onload = function() {
-      if (document.body.classList.contains('results-view')) {
-        const results = JSON.parse(sessionStorage.getItem('analysis_results'));
-        if (!results) {
-          window.location.href = 'index.html';
-          return;
+      const dataStr = sessionStorage.getItem('analysis_results');
+      if (dataStr) {
+        const results = JSON.parse(dataStr);
+        
+        // 1. Basic Info
+        document.getElementById('res-username').innerText = '@' + results.username;
+        document.getElementById('res-avatar').innerText = results.username[0].toUpperCase();
+        document.getElementById('res-score').innerText = results.score;
+        document.getElementById('res-repos').innerText = results.totalRepos || results.repos;
+        document.getElementById('res-exp').innerText = results.experience || '1.2';
+        
+        // 2. Top Repos
+        const reposContainer = document.getElementById('res-top-repos');
+        if (results.topRepos && results.topRepos.length > 0) {
+          reposContainer.innerHTML = results.topRepos.map(repo => `
+            <a href="${repo.url}" target="_blank" style="text-decoration: none; display: block;">
+              <div class="metric-item" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 0.75rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                <span style="color: var(--text-white); font-weight: 500;">${repo.name}</span>
+                <span style="color: var(--emerald); font-size: 0.8rem;">⭐ ${repo.stars}</span>
+              </div>
+            </a>
+          `).join('');
         }
 
-        document.getElementById('res-username').innerText = `@${results.username}`;
-        document.getElementById('res-score').innerText = results.score;
-        document.getElementById('res-score-detail').innerText = results.score;
-        document.getElementById('res-repos').innerText = results.repos;
+        // 3. AI Insights
+        if (results.decisionData) {
+          const d = results.decisionData;
+          document.getElementById('res-grade').innerText = d.grade || 'B+';
+          document.getElementById('res-summary').innerText = d.summary || 'Solid developer with consistent output.';
+          
+          if (d.skills) {
+            document.getElementById('res-skills').innerHTML = d.skills.map(s => `<span class="skill-tag">${s}</span>`).join('');
+          }
+          
+          if (d.strengths) {
+            document.getElementById('res-pros').innerHTML = d.strengths.map(p => `<div class="point pro">${p}</div>`).join('');
+          }
+          
+          if (d.weaknesses) {
+            document.getElementById('res-cons').innerHTML = d.weaknesses.map(c => `<div class="point con">${c}</div>`).join('');
+          }
+        }
 
-        // Optionally fetch decision if not already present
-        if (results.decision) {
-          document.getElementById('res-decision').innerText = results.decision;
-        } else {
-          // If we want to simulate/fetch panel decision here
-          // This could be a second API call
+        // 4. Languages
+        if (results.languages) {
+          const langContainer = document.getElementById('res-languages');
+          const total = Object.values(results.languages).reduce((a, b) => a + b, 0);
+          langContainer.innerHTML = Object.entries(results.languages)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([lang, count]) => {
+              const pct = Math.round((count / total) * 100);
+              return `
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.4rem;">
+                    <span>${lang}</span>
+                    <span style="color: var(--text-dim);">${pct}%</span>
+                  </div>
+                  <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
+                    <div style="width: ${pct}%; height: 100%; background: var(--emerald);"></div>
+                  </div>
+                </div>
+              `;
+            }).join('');
         }
       }
     };

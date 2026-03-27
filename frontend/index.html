@@ -3,24 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SignalHire AI | Intelligent Candidate Analysis</title>
+  <title>SignalHire AI | Smarter Hiring Decisions</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <div class="container">
-    <h1>SignalHire AI</h1>
-    <p class="subtitle">Evaluate GitHub profiles with artificial intelligence to find the perfect technical match.</p>
-    
-    <div class="search-box">
-      <input type="text" id="username" placeholder="Enter GitHub username..." spellcheck="false" autocomplete="off" />
-      <button onclick="analyze()">Analyze Profile</button>
+  <!-- Navigation -->
+  <nav>
+    <div class="brand">
+      <div class="brand-icon">S</div>
+      SignalHire AI
     </div>
-  </div>
+  </nav>
 
-  <div id="loader">
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>SignalHire AI</h1>
+    <p>Analyze any GitHub profile to evaluate technical expertise, project quality, and developer sentiment.</p>
+    
+    <!-- The actual search box Integrated into the landing page -->
+    <div id="analyze" class="search-container">
+      <input type="text" id="username" placeholder="Enter GitHub username to analyze..." spellcheck="false" autocomplete="off" />
+      <button class="btn-primary" onclick="analyze()">Analyze Profile</button>
+    </div>
+
+    <!-- Dashboard Mockup Image -->
+    <div class="mockup">
+      <img src="https://file-examples.com/wp-content/uploads/2017/10/file_example_JPG_1MB.jpg" alt="Dashboard Mockup" id="mockup-img" style="filter: invert(100%) opacity(0.2);" />
+    </div>
+  </section>
+
+  <!-- Loader Overlay -->
+  <div id="loader" style="display: none; position: fixed; inset: 0; z-index: 2000; flex-direction: column; justify-content: center; align-items: center;">
     <div class="spinner"></div>
-    <p id="loader-text">Analyzing repositories...</p>
+    <p id="loader-text" style="color: #a3a3a3; font-weight: 500;">Synthesizing developer profile...</p>
   </div>
 
   <script src="script.js"></script>
